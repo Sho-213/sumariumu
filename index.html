@@ -53,6 +53,27 @@
       justify-content: center;
     }
 
+    /* 右下のパネル再表示ボタン (ちっちゃい丸) */
+    #reopen-panel-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+    }
+
     /* モーダル共通スタイル */
     .modal-overlay {
       display: none;
@@ -109,12 +130,16 @@
       background: #555;
     }
 
+    .modal-box .delete-btn {
+      background: #dc3545;
+    }
+
     /* カラー選択グリッド */
     .color-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 8px;
-      margin: 15px 0;
+      margin: 10px 0;
       justify-items: center;
     }
 
@@ -154,6 +179,26 @@
     #host-panel { display: none; }
     #guest-panel { display: none; }
 
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .close-panel-btn {
+      background: transparent;
+      border: none;
+      color: #aaa;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    .close-panel-btn:hover {
+      color: #fff;
+    }
+
     .panel-section {
       margin-bottom: 12px;
       padding-bottom: 10px;
@@ -167,7 +212,7 @@
     }
 
     .panel-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
       margin-bottom: 8px;
       color: #aaa;
@@ -181,11 +226,12 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 6px;
+      align-items: center;
     }
 
     .color-btn {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       border: 2px solid #fff;
       cursor: pointer;
@@ -200,6 +246,33 @@
       transform: scale(0.9);
     }
 
+    /* カスタムカラー追加ボタン */
+    .add-color-wrapper {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px dashed #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .add-color-wrapper input[type="color"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
     .grad-create-btn {
       padding: 8px 14px;
       border-radius: 20px;
@@ -209,7 +282,7 @@
       font-weight: bold;
       font-size: 12px;
       cursor: pointer;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .text-input-group {
@@ -231,8 +304,8 @@
 
     .text-input-group input[type="color"] {
       border: none;
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 6px;
       cursor: pointer;
       background: transparent;
@@ -253,14 +326,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .switch {
       position: relative;
       display: inline-block;
-      width: 44px;
-      height: 24px;
+      width: 42px;
+      height: 22px;
     }
 
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -271,14 +344,14 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #555;
       transition: .3s;
-      border-radius: 24px;
+      border-radius: 22px;
     }
 
     .slider:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
+      height: 16px;
+      width: 16px;
       left: 3px;
       bottom: 3px;
       background-color: white;
@@ -307,6 +380,9 @@
 
   <!-- 右上の鍵ボタン -->
   <button id="host-btn">🔑</button>
+
+  <!-- 右下のパネル再表示ボタン (ちっちゃい丸) -->
+  <button id="reopen-panel-btn">🎨</button>
 
   <!-- 1. ホストパスワード入力モーダル -->
   <div id="modal-pass" class="modal-overlay">
@@ -355,20 +431,45 @@
     </div>
   </div>
 
+  <!-- 4. カスタムカラー削除確認モーダル -->
+  <div id="modal-delete-color" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="margin: 0 0 10px 0;">色の削除</h3>
+      <p style="font-size:13px; margin-bottom:12px;">選択したカスタムカラーを削除しますか？</p>
+      <div id="delete-color-preview" style="width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 12px; border: 2px solid #fff;"></div>
+      <div>
+        <button id="confirm-delete-btn" class="delete-btn">削除</button>
+        <button id="cancel-delete-btn" class="cancel-btn">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ホスト用操作パネル -->
   <div id="host-panel" class="panel">
+    <div class="panel-header">
+      <div class="panel-title" style="margin:0;">ホストコントロールパネル</div>
+      <button class="close-panel-btn" id="close-host-panel-btn">✕</button>
+    </div>
+
     <div class="panel-section">
-      <div class="toggle-container">
+      <div class="toggle-container" style="margin-bottom: 6px;">
         <span>ゲストの色操作許可</span>
         <label class="switch">
           <input type="checkbox" id="guest-control-toggle">
           <span class="slider"></span>
         </label>
       </div>
+      <div class="toggle-container">
+        <span>ゲストの文字入力許可</span>
+        <label class="switch">
+          <input type="checkbox" id="guest-text-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
 
     <div class="panel-section">
-      <div class="panel-title">単色カラー制御 (全19色)</div>
+      <div class="panel-title">全体カラー制御 (全画面変更)</div>
       <div id="host-color-list" class="color-container"></div>
     </div>
 
@@ -378,7 +479,7 @@
     </div>
 
     <div class="panel-section">
-      <div class="panel-title">文字表示設定</div>
+      <div class="panel-title">全体文字表示設定</div>
       <div class="text-input-group">
         <input type="text" id="host-text-input" placeholder="表示する文字">
         <input type="color" id="host-text-color" value="#ffffff">
@@ -390,11 +491,30 @@
 
   <!-- ゲスト用操作パネル -->
   <div id="guest-panel" class="panel">
-    <div class="panel-title">マイカラー選択 (ホスト許可色)</div>
-    <div id="guest-color-list" class="color-container"></div>
+    <div class="panel-header">
+      <div class="panel-title" style="margin:0;">マイカラー選択 (自分のみ変更)</div>
+      <button class="close-panel-btn" id="close-guest-panel-btn">✕</button>
+    </div>
     
-    <div class="panel-title" style="margin-top: 12px;">グラデーション作成</div>
-    <button class="grad-create-btn" id="guest-open-grad-btn">＋ 2色からカスタム作成</button>
+    <div class="panel-section">
+      <div id="guest-color-list" class="color-container"></div>
+    </div>
+    
+    <div class="panel-section">
+      <div class="panel-title">グラデーション作成</div>
+      <button class="grad-create-btn" id="guest-open-grad-btn">＋ 2色からカスタム作成</button>
+    </div>
+
+    <!-- ゲスト用テキスト設定エリア -->
+    <div class="panel-section" id="guest-text-section" style="display: none;">
+      <div class="panel-title">個人文字表示設定</div>
+      <div class="text-input-group">
+        <input type="text" id="guest-text-input" placeholder="表示する文字">
+        <input type="color" id="guest-text-color" value="#ffffff">
+        <button class="action-btn" id="guest-send-text-btn">反映</button>
+        <button class="action-btn" style="background:#555;" id="guest-clear-text-btn">消去</button>
+      </div>
+    </div>
   </div>
 
   <!-- Firebase SDK (Compat版) -->
@@ -405,8 +525,10 @@
     const HOST_PASSWORD = "Shoryu";
     let isHost = false;
     let canGuestControl = false;
+    let canGuestText = false;
+    let hostTextData = null;
 
-    // 19色のプリセット定義 (18色 + 黒)
+    // 19色のプリセット定義
     const PRESET_COLORS = [
       { name: "レッド", code: "#FF0000" },
       { name: "クリムゾン", code: "#DC143C" },
@@ -429,13 +551,24 @@
       { name: "ブラック", code: "#000000" }
     ];
 
-    let allowedColorCodes = PRESET_COLORS.map(c => c.code); // デフォルト全許可
+    let allowedColorCodes = PRESET_COLORS.map(c => c.code);
+    let hostCustomColors = [];
+    let guestCustomColors = [];
+    let colorToDelete = null;
 
     // UI要素の取得
     const hostBtn = document.getElementById('host-btn');
+    const reopenPanelBtn = document.getElementById('reopen-panel-btn');
+    const closeHostPanelBtn = document.getElementById('close-host-panel-btn');
+    const closeGuestPanelBtn = document.getElementById('close-guest-panel-btn');
+    
     const modalPass = document.getElementById('modal-pass');
     const modalGuestAllow = document.getElementById('modal-guest-allow');
     const modalGradBuilder = document.getElementById('modal-grad-builder');
+    const modalDeleteColor = document.getElementById('modal-delete-color');
+    const deleteColorPreview = document.getElementById('delete-color-preview');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
     
     const passInput = document.getElementById('pass-input');
     const passSubmit = document.getElementById('pass-submit');
@@ -444,11 +577,19 @@
     const hostPanel = document.getElementById('host-panel');
     const guestPanel = document.getElementById('guest-panel');
     const guestControlToggle = document.getElementById('guest-control-toggle');
+    const guestTextToggle = document.getElementById('guest-text-toggle');
+    
     const displayElement = document.getElementById('display-text');
     const hostTextInput = document.getElementById('host-text-input');
     const hostTextColor = document.getElementById('host-text-color');
     const sendTextBtn = document.getElementById('send-text-btn');
     const clearTextBtn = document.getElementById('clear-text-btn');
+
+    const guestTextSection = document.getElementById('guest-text-section');
+    const guestTextInput = document.getElementById('guest-text-input');
+    const guestTextColor = document.getElementById('guest-text-color');
+    const guestSendTextBtn = document.getElementById('guest-send-text-btn');
+    const guestClearTextBtn = document.getElementById('guest-clear-text-btn');
 
     const hostColorList = document.getElementById('host-color-list');
     const guestColorList = document.getElementById('guest-color-list');
@@ -457,8 +598,8 @@
     const gradEndGrid = document.getElementById('grad-end-grid');
     const gradPreview = document.getElementById('grad-preview');
 
-    let selectedStartColor = PRESET_COLORS[3].code; // #FF007F
-    let selectedEndColor = PRESET_COLORS[11].code;   // #0088FF
+    let selectedStartColor = PRESET_COLORS[3].code;
+    let selectedEndColor = PRESET_COLORS[11].code;
 
     // Firebaseの設定
     const firebaseConfig = {
@@ -472,33 +613,45 @@
       measurementId: "G-Y4Y5GTQT1W"
     };
 
-    // Firebase参照
-    let db, colorRef, guestControlRef, textRef, allowedColorsRef;
+    let db, colorRef, guestControlRef, guestTextRef, textRef, allowedColorsRef;
 
     try {
       firebase.initializeApp(firebaseConfig);
       db = firebase.database();
       colorRef = db.ref('lightColor');
       guestControlRef = db.ref('guestCanControl');
+      guestTextRef = db.ref('guestCanText');
       textRef = db.ref('displayText');
       allowedColorsRef = db.ref('allowedColors');
 
-      // 1. カラー変更の同期受信
+      // 全体カラー同期処理
       colorRef.on('value', (snapshot) => {
         applyStyle(snapshot.val());
       });
 
-      // 2. ゲスト制御権限の同期受信
       guestControlRef.on('value', (snapshot) => {
         canGuestControl = !!snapshot.val();
         guestControlToggle.checked = canGuestControl;
 
         if (!isHost) {
-          guestPanel.style.display = canGuestControl ? 'block' : 'none';
+          if (canGuestControl) {
+            if (reopenPanelBtn.style.display !== 'flex') {
+              guestPanel.style.display = 'block';
+            }
+          } else {
+            guestPanel.style.display = 'none';
+            reopenPanelBtn.style.display = 'none';
+          }
         }
       });
 
-      // 3. 許可された色の同期受信
+      guestTextRef.on('value', (snapshot) => {
+        canGuestText = !!snapshot.val();
+        guestTextToggle.checked = canGuestText;
+        guestTextSection.style.display = canGuestText ? 'block' : 'none';
+        updateDisplayText();
+      });
+
       allowedColorsRef.on('value', (snapshot) => {
         const val = snapshot.val();
         if (Array.isArray(val)) {
@@ -509,22 +662,28 @@
         renderGuestColors();
       });
 
-      // 4. テキスト表示の同期受信
       textRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data && data.text) {
-          displayElement.textContent = data.text;
-          displayElement.style.color = data.color || '#ffffff';
-        } else {
-          displayElement.textContent = '';
-        }
+        hostTextData = snapshot.val();
+        updateDisplayText();
       });
 
     } catch (e) {
       console.error("Firebase初期化エラー:", e);
     }
 
-    // --- 背景描画処理 ---
+    // 文字表示の全体更新処理
+    function updateDisplayText() {
+      if (!isHost && canGuestText && guestTextInput.value.trim() !== '') {
+        displayElement.textContent = guestTextInput.value;
+        displayElement.style.color = guestTextColor.value;
+      } else if (hostTextData && hostTextData.text) {
+        displayElement.textContent = hostTextData.text;
+        displayElement.style.color = hostTextData.color || '#ffffff';
+      } else {
+        displayElement.textContent = '';
+      }
+    }
+
     function applyStyle(styleValue) {
       if (!styleValue) return;
       if (styleValue.includes('gradient')) {
@@ -535,15 +694,109 @@
       }
     }
 
+    // 色変更処理（ホストは全員へ同期、ゲストは自分の画面のみ変更）
     function setColor(colorValue) {
-      if ((isHost || canGuestControl) && colorRef) {
-        colorRef.set(colorValue).catch(err => console.error(err));
-      } else if (!isHost && !canGuestControl) {
+      if (isHost) {
+        if (colorRef) colorRef.set(colorValue).catch(err => console.error(err));
+      } else if (canGuestControl) {
+        // ゲストの場合は自分のローカル画面（DOM）のみスタイルを反映
+        applyStyle(colorValue);
+      } else {
         alert("現在ホストにより操作が制限されています。");
       }
     }
 
-    // --- パスワード認証 ---
+    // --- パネルの閉じる/再開処理 ---
+    function closeCurrentPanel() {
+      if (isHost) {
+        hostPanel.style.display = 'none';
+      } else {
+        guestPanel.style.display = 'none';
+      }
+      reopenPanelBtn.style.display = 'flex';
+    }
+
+    function reopenCurrentPanel() {
+      if (isHost) {
+        hostPanel.style.display = 'block';
+      } else if (canGuestControl) {
+        guestPanel.style.display = 'block';
+      }
+      reopenPanelBtn.style.display = 'none';
+    }
+
+    closeHostPanelBtn.addEventListener('click', closeCurrentPanel);
+    closeGuestPanelBtn.addEventListener('click', closeCurrentPanel);
+    reopenPanelBtn.addEventListener('click', reopenCurrentPanel);
+
+    // --- 長押しイベントヘルパー ---
+    function attachLongPressListener(element, code, isCustom) {
+      if (!isCustom) {
+        element.addEventListener('click', () => setColor(code));
+        return;
+      }
+
+      let timer;
+      let isLongPress = false;
+
+      const start = () => {
+        isLongPress = false;
+        timer = setTimeout(() => {
+          isLongPress = true;
+          promptDeleteColor(code);
+        }, 500);
+      };
+
+      const cancel = () => {
+        clearTimeout(timer);
+      };
+
+      element.addEventListener('touchstart', start, { passive: true });
+      element.addEventListener('touchend', (e) => {
+        cancel();
+        if (!isLongPress) setColor(code);
+      });
+      element.addEventListener('touchmove', cancel);
+
+      element.addEventListener('mousedown', start);
+      element.addEventListener('mouseup', (e) => {
+        cancel();
+        if (!isLongPress) setColor(code);
+      });
+      element.addEventListener('mouseleave', cancel);
+
+      element.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        promptDeleteColor(code);
+      });
+    }
+
+    function promptDeleteColor(code) {
+      colorToDelete = code;
+      deleteColorPreview.style.background = code;
+      modalDeleteColor.style.display = 'flex';
+    }
+
+    confirmDeleteBtn.addEventListener('click', () => {
+      if (colorToDelete) {
+        if (isHost) {
+          hostCustomColors = hostCustomColors.filter(c => c !== colorToDelete);
+          renderHostColors();
+        } else {
+          guestCustomColors = guestCustomColors.filter(c => c !== colorToDelete);
+          renderGuestColors();
+        }
+      }
+      colorToDelete = null;
+      modalDeleteColor.style.display = 'none';
+    });
+
+    cancelDeleteBtn.addEventListener('click', () => {
+      colorToDelete = null;
+      modalDeleteColor.style.display = 'none';
+    });
+
+    // --- 認証 ---
     hostBtn.addEventListener('click', () => {
       if (isHost) {
         alert("すでにホストモードです。");
@@ -562,6 +815,7 @@
         modalPass.style.display = 'none';
         hostPanel.style.display = 'block';
         guestPanel.style.display = 'none';
+        reopenPanelBtn.style.display = 'none';
       } else {
         alert("パスワードが違います。");
       }
@@ -575,45 +829,92 @@
     // --- カラーパレット描画 ---
     function renderHostColors() {
       hostColorList.innerHTML = '';
+      
       PRESET_COLORS.forEach(c => {
         const btn = document.createElement('button');
         btn.className = 'color-btn';
         btn.style.background = c.code;
-        btn.title = c.name;
-        btn.addEventListener('click', () => setColor(c.code));
+        attachLongPressListener(btn, c.code, false);
         hostColorList.appendChild(btn);
       });
+
+      hostCustomColors.forEach(code => {
+        const btn = document.createElement('button');
+        btn.className = 'color-btn';
+        btn.style.background = code;
+        attachLongPressListener(btn, code, true);
+        hostColorList.appendChild(btn);
+      });
+
+      const addWrapper = document.createElement('div');
+      addWrapper.className = 'add-color-wrapper';
+      addWrapper.innerHTML = '＋<input type="color" id="host-add-picker">';
+      const picker = addWrapper.querySelector('input');
+      picker.addEventListener('change', (e) => {
+        const newColor = e.target.value.toUpperCase();
+        if (!hostCustomColors.includes(newColor) && !PRESET_COLORS.some(c => c.code === newColor)) {
+          hostCustomColors.push(newColor);
+          renderHostColors();
+        }
+        setColor(newColor);
+      });
+      hostColorList.appendChild(addWrapper);
     }
 
     function renderGuestColors() {
       guestColorList.innerHTML = '';
-      PRESET_COLORS.filter(c => allowedColorCodes.includes(c.code)).forEach(c => {
+      
+      allowedColorCodes.forEach(code => {
         const btn = document.createElement('button');
         btn.className = 'color-btn';
-        btn.style.background = c.code;
-        btn.title = c.name;
-        btn.addEventListener('click', () => setColor(c.code));
+        btn.style.background = code;
+        attachLongPressListener(btn, code, false);
         guestColorList.appendChild(btn);
       });
+
+      guestCustomColors.forEach(code => {
+        const btn = document.createElement('button');
+        btn.className = 'color-btn';
+        btn.style.background = code;
+        attachLongPressListener(btn, code, true);
+        guestColorList.appendChild(btn);
+      });
+
+      const addWrapper = document.createElement('div');
+      addWrapper.className = 'add-color-wrapper';
+      addWrapper.innerHTML = '＋<input type="color" id="guest-add-picker">';
+      const picker = addWrapper.querySelector('input');
+      picker.addEventListener('change', (e) => {
+        const newColor = e.target.value.toUpperCase();
+        if (!guestCustomColors.includes(newColor) && !allowedColorCodes.includes(newColor)) {
+          guestCustomColors.push(newColor);
+          renderGuestColors();
+        }
+        setColor(newColor);
+      });
+      guestColorList.appendChild(addWrapper);
     }
 
-    // --- ゲスト色許可モーダル処理 ---
+    // --- ゲスト権限管理 ---
     guestControlToggle.addEventListener('change', (e) => {
       if (!isHost) return;
 
       if (e.target.checked) {
-        // ONにしようとしたら許可選択モーダルを開く
-        e.target.checked = false; // 一旦戻す
+        e.target.checked = false;
         openGuestAllowModal();
       } else {
-        // OFFにする場合
         if (guestControlRef) guestControlRef.set(false);
       }
     });
 
+    guestTextToggle.addEventListener('change', (e) => {
+      if (!isHost) return;
+      if (guestTextRef) guestTextRef.set(e.target.checked);
+    });
+
     function openGuestAllowModal() {
       allowColorGrid.innerHTML = '';
-      PRESET_COLORS.forEach((c, idx) => {
+      PRESET_COLORS.forEach((c) => {
         const item = document.createElement('label');
         item.className = 'color-grid-item';
 
@@ -655,11 +956,11 @@
       modalGuestAllow.style.display = 'none';
     });
 
-    // --- グラデーションビルダーモーダル処理 ---
+    // --- グラデーション ---
     function openGradBuilder() {
       const colorsToDisplay = isHost 
-        ? PRESET_COLORS 
-        : PRESET_COLORS.filter(c => allowedColorCodes.includes(c.code));
+        ? [...PRESET_COLORS, ...hostCustomColors.map(c => ({ name: 'Custom', code: c }))] 
+        : [...PRESET_COLORS.filter(c => allowedColorCodes.includes(c.code)), ...guestCustomColors.map(c => ({ name: 'Custom', code: c }))];
 
       renderGradGrid(gradStartGrid, 'grad-start', colorsToDisplay, selectedStartColor, (code) => {
         selectedStartColor = code;
@@ -677,7 +978,7 @@
 
     function renderGradGrid(container, groupName, colors, currentSelected, onSelect) {
       container.innerHTML = '';
-      colors.forEach((c, idx) => {
+      colors.forEach((c) => {
         const item = document.createElement('label');
         item.className = 'color-grid-item';
 
@@ -717,7 +1018,7 @@
       modalGradBuilder.style.display = 'none';
     });
 
-    // --- テキスト操作 ---
+    // --- テキスト処理 ---
     sendTextBtn.addEventListener('click', () => {
       if (isHost && textRef) {
         textRef.set({
@@ -734,11 +1035,19 @@
       }
     });
 
-    // 初期化実行
+    guestSendTextBtn.addEventListener('click', () => {
+      updateDisplayText();
+    });
+
+    guestClearTextBtn.addEventListener('click', () => {
+      guestTextInput.value = '';
+      updateDisplayText();
+    });
+
+    // 初期表示
     renderHostColors();
     renderGuestColors();
 
-    // 画面スリープ防止
     if ('wakeLock' in navigator) {
       navigator.wakeLock.request('screen').catch(() => {});
     }
